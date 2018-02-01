@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 FILE *inicioLexema, *avance;
-char ultimoLex3ema[100];
+char ultimoLexema[100];
 
 enum token {OPERADOR_RELACION= 0};
 
@@ -17,6 +17,7 @@ void rechazarPalabra() {
 }
 
 char obtenerSiguienteCaracter(){
+    printf("%c", avance);
     return fgetc( avance );
 }
 
@@ -78,8 +79,8 @@ int isfeof(){
 }
 
 int main(){
-    inicioLexema=fopen("archivo_fuente", "r");
-    avance= fopen("archivo_fuente", "r");
+    FILE *inicioLexema = fopen("archivo_fuente.txt", "r");
+    FILE *avance = fopen("archivo_fuente.txt", "r");
     while(!isfeof()){
         if(oprel()!= -1){
             aceptarPalabra();
