@@ -111,8 +111,8 @@ int isfeof()
 
 int main()
 {
-    inicioLexema = fopen("archivo_fuente.txt", "r");
-    avance = fopen("archivo_fuente.txt", "r");
+    inicioLexema = fopen("origen.txt", "r");
+    avance = fopen("origen.txt", "r");
     int c; 
 
     while (!isfeof())
