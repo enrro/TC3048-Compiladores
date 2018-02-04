@@ -3,22 +3,36 @@
 
 FILE *inicioLexema, *avance;
 char ultimoLexema[100];
+char keywords[7][7] = {"program",
+                        "var","begin",
+                        "end","if",
+                        "then","else"};
 
 enum token{OPERADOR_RELACION = 0};
 
 void aceptarPalabra()
 {
+    char buffer [100];
+
     long inicioPalabra = ftell(inicioLexema);
     long finPalabra = ftell(avance);
+    // fgets prints whatever is between the starting point and the end point
+    fgets(buffer, finPalabra - inicioPalabra, inicioLexema);
+    printf ("[%s]", buffer);
+    fseek(inicioLexema, finPalabra, SEEK_SET);
+}
 
-    fread(ultimoLexema, finPalabra - inicioPalabra, 1, inicioLexema);
-
+void aceptarEspacio()
+{
+    long inicioPalabra = ftell(inicioLexema);
+    long finPalabra = ftell(avance);
     fseek(inicioLexema, finPalabra, SEEK_SET);
 }
 
 void rechazarPalabra()
 {
-    fseek(avance, ftell(inicioLexema), SEEK_SET);
+    long inicioPalabra = ftell(inicioLexema);
+    fseek(avance, inicioPalabra, SEEK_SET);
 }
 
 char obtenerSiguienteCaracter()
@@ -123,8 +137,7 @@ int main()
         }
         else if(equalizer() != -1)
         {
-            aceptarPalabra();
-            printf("espacio \n");            
+            aceptarEspacio();
         }
         else
         {
