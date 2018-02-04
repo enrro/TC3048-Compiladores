@@ -8,33 +8,38 @@
 			<initial/>
 		</state>
 		<state id="1" name="q1">
-			<x>301.0</x>
-			<y>96.0</y>
+			<x>398.0</x>
+			<y>46.0</y>
 			<final/>
 		</state>
 		<state id="2" name="q2">
-			<x>274.0</x>
-			<y>206.0</y>
+			<x>304.0</x>
+			<y>214.0</y>
 		</state>
 		<!--The list of transitions.-->
-		<transition>
-			<from>2</from>
-			<to>1</to>
-			<read>azAZ</read>
-		</transition>
-		<transition>
-			<from>0</from>
-			<to>1</to>
-			<read>azAZ</read>
-		</transition>
 		<transition>
 			<from>0</from>
 			<to>2</to>
 			<read>_</read>
 		</transition>
 		<transition>
+			<from>0</from>
+			<to>1</to>
+			<read>azAZ</read>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>1</to>
+			<read>azAZ</read>
+		</transition>
+		<transition>
 			<from>1</from>
 			<to>1</to>
+			<read>0-9</read>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>2</to>
 			<read>0-9</read>
 		</transition>
 		<transition>
@@ -45,6 +50,11 @@
 		<transition>
 			<from>1</from>
 			<to>1</to>
+			<read>_</read>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>2</to>
 			<read>_</read>
 		</transition>
 	</automaton>
