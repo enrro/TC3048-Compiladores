@@ -29,7 +29,7 @@ char obtenerSiguienteCaracter()
 int equalizer()
 {
     char c = obtenerSiguienteCaracter();
-    if (c == ' ')
+    if (c == ' ' || c =='\n' || c == '\t')
     {
         return 1;
     }
@@ -42,7 +42,6 @@ int oprel()
     char c = obtenerSiguienteCaracter();
     while (c != ' ' && c != '\n' && c != '\t' && c != EOF && estadoActual != -1)
     {
-        printf("%d \n",estadoActual);
         switch (estadoActual){
         case 0:
             switch (c){
