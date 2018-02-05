@@ -211,6 +211,49 @@ int operadorAsignacion()
     return -1;
 }
 
+int operadoresAritmeticos()
+{
+    char c = obtenerSiguienteCaracter();
+    int estadoActual = 0;
+    while(isNormalChar(c) && estadoActual != -1)
+    {
+        switch(estadoActual)
+        {
+        case 0:
+            switch(c)
+            {
+            case '+':
+                estadoActual = 1;
+                break;
+            case '-':
+                estadoActual = 2;
+                break;
+            case '*':
+                estadoActual = 3;
+                break;
+            case '/':
+                estadoActual = 4;
+                break;
+            default:
+                estadoActual = -1;
+                break;
+            }
+            break;
+        default:
+            estadoActual = -1;
+        }
+        c = obtenerSiguienteCaracter();
+        
+    }
+    
+    if(estadoActual == 1 || estadoActual == 2 || estadoActual == 3 || estadoActual == 4)
+    {
+        return estadoActual;
+    }
+    rechazarPalabra();
+    return -1;
+}
+
 int signosPuntuacion()
 {
     char c = obtenerSiguienteCaracter();
@@ -432,6 +475,25 @@ int main()
                     break;
                 case 4:
                     puts("Corchete derecho");
+                    break;
+            }
+        }
+        else if((c=operadoresAritmeticos())!=-1)
+        {
+            aceptarPalabra();
+            switch(c)
+            {
+                case 1:
+                    puts("suma");
+                    break;
+                case 2:
+                    puts("resta");
+                    break;
+                case 3:
+                    puts("multiplicacion");
+                    break;
+                case 4:
+                    puts("division");
                     break;
             }
         }
