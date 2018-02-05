@@ -62,6 +62,11 @@ int isNormalChar(int c)
     return (c != ' ' && c != '\n' && c != '\t' && c != EOF);
 }
 
+int isPuntuacion(int c)
+{
+    return (c != '.' && c != ',' && c != ';', c != '(', c != ')');
+}
+
 int equalizer()
 {
     char c = obtenerSiguienteCaracter();
@@ -126,7 +131,7 @@ int palabraReservada()
     int contador, palabra, estadoActual;
     palabra = contador = estadoActual = 0;
     
-    while(isNormalChar(c) && estadoActual != -1 && contador<LARGO_PALABRAS_RESERVADAS)
+    while(isNormalChar(c) && c != '(' && isPuntuacion(c) && estadoActual != -1 && contador<LARGO_PALABRAS_RESERVADAS)
     {
         if(isalpha(c))
         {
@@ -351,7 +356,7 @@ int identificador()
 {
     int estadoActual = 0;
     char c = obtenerSiguienteCaracter();
-    while(isNormalChar(c) && estadoActual != -1)
+    while(isNormalChar(c) && c != ','  && c != ')' && estadoActual != -1)
     {
         if(isalpha(c))
         {
@@ -401,7 +406,7 @@ int numeros()
     char c = obtenerSiguienteCaracter();
      
 
-    while (isNormalChar(c) && estadoActual != -1)
+    while (isNormalChar(c) && estadoActual != -1 && c != ';')
     {
         switch (estadoActual){
         case 0:
