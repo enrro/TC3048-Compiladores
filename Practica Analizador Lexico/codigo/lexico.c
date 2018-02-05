@@ -129,7 +129,8 @@ int caracterDelimitacion()
         default:
             estadoActual = -1;
             break;
-    c = obtenerSiguienteCaracter();
+    //ok so this seems to be the key to avoid using the hardcoded 1 at the top of acceptword
+    //c = obtenerSiguienteCaracter();
     }
     if(estadoActual == 1 || estadoActual == 2 || estadoActual == 3 || estadoActual == 4)
     {
@@ -173,6 +174,45 @@ int operadorAsignacion()
     return -1;
 }
 
+int signosPuntuacion()
+{
+    char c = obtenerSiguienteCaracter();
+    int estadoActual = 0;
+    while(isNormalChar(c) && estadoActual != -1)
+    {
+        switch(estadoActual)
+        {
+        case 0:
+            switch(c)
+            {
+            case '.':
+                estadoActual = 1;
+                break;
+            case ',':
+                estadoActual = 2;
+                break;
+            case ';':
+                estadoActual = 3;
+                break;
+            default:
+                estadoActual = -1;
+                break;
+            }
+            break;
+        default:
+            estadoActual = -1;
+        }
+        c = obtenerSiguienteCaracter();
+        
+    }
+    
+    if(estadoActual == 1 || estadoActual == 2 || estadoActual == 3)
+    {
+        return estadoActual;
+    }
+    rechazarPalabra();
+    return -1;
+}
 
 int identificador()
 {
@@ -357,6 +397,22 @@ int main()
         {
             aceptarPalabra();
             puts("Asignacion");
+        }
+        else if((c=signosPuntuacion()) !=-1)
+        {
+            aceptarPalabra();
+            switch(c)
+            {
+                case 1:
+                    puts("Punto");
+                    break;
+                case 2:
+                    puts("Coma");
+                    break;
+                case 3:
+                    puts("Punto y coma");
+                    break;
+            }
         }
         else
         {
