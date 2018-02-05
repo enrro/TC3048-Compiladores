@@ -8,7 +8,7 @@
 #define OPERADORES_LOGICOS        3
 #define LARGO_OPERADORES_LOGICOS  4
 
-FILE *inicioLexema, *avance;
+FILE *inicioLexema, *avance, *offset;
 int numeroLinea = 1;
 char ultimoLexema[100];
 char arrOperadoresLogicos[OPERADORES_LOGICOS][LARGO_OPERADORES_LOGICOS] = {"and", "or", "not"};
@@ -30,6 +30,14 @@ void aceptarPalabra()
     printf ("[%s]\t\t", buffer);
     fseek(inicioLexema, finPalabra, SEEK_SET);
 }
+void aceptarComentario()
+{
+    
+    long inicioPalabra = ftell(inicioLexema);
+    long finPalabra = ftell(avance);
+    // fgets prints whatever is between the starting point and the end point
+    fseek(inicioLexema, finPalabra, SEEK_SET);
+}
 
 void aceptarEspacio()
 {
@@ -45,6 +53,7 @@ void rechazarPalabra()
 
 char obtenerSiguienteCaracter()
 {
+    offset = ftell(avance);
     return fgetc(avance);
 }
 
@@ -254,6 +263,45 @@ int operadoresAritmeticos()
     return -1;
 }
 
+int comentarios()
+{
+    char c = obtenerSiguienteCaracter();
+    int estadoActual = 0;
+    while(isNormalChar(c) && estadoActual != -1)
+    {
+        if(estadoActual == 0 && c == '/')
+        {
+            estadoActual = 1;
+        }
+        else if (estadoActual == 1 && c == '/')
+        {
+            estadoActual = 2;
+            
+        }
+        else
+        {
+            estadoActual = -1;
+        }
+        c = obtenerSiguienteCaracter();
+        
+    }
+    
+    if(estadoActual == 2)
+    {
+        while( c != '\n' && c != EOF)
+        {
+            c = obtenerSiguienteCaracter();
+        }
+    }
+
+    if(estadoActual == 2)
+    {
+        return estadoActual;
+    }
+    rechazarPalabra();
+    return -1;
+}
+
 int signosPuntuacion()
 {
     char c = obtenerSiguienteCaracter();
@@ -333,7 +381,10 @@ int identificador()
         }
         c = obtenerSiguienteCaracter();
     }
-    
+    if(estadoActual == 1)
+    {
+
+    }
     if(estadoActual == 1)
     {
         return estadoActual;
@@ -521,6 +572,8 @@ int main()
 {
     inicioLexema = fopen("origen.txt", "r");
     avance = fopen("origen.txt", "r");
+    offset = fopen("origen.txt", "r");
+    
     int c; 
 
     while (!isfeof())
@@ -553,6 +606,10 @@ int main()
         else if(equalizer() != -1)
         {
             aceptarEspacio();
+        }
+        else if(comentarios()!=-1)
+        {
+            aceptarComentario();
         }
         else if((c = numeros()) != -1)
         {
