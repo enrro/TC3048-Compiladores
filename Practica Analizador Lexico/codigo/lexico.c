@@ -3,13 +3,16 @@
 #include <ctype.h>
 #include <string.h>
 
+#define PALABRAS_RESERVADAS       7
+#define LARGO_PALABRAS_RESERVADAS 8
+
 FILE *inicioLexema, *avance;
 int numeroLinea = 1;
 char ultimoLexema[100];
-char keywords[7][7] = {"program",
-                        "var","begin",
-                        "end","if",
-                        "then","else"};
+char diccionario[PALABRAS_RESERVADAS][LARGO_PALABRAS_RESERVADAS] = {"program",
+                                                                "var","begin",
+                                                                "end","if",
+                                                                "then","else"};
 char mensajedeError[] = "Error en la linea ";
 int error_token = 0;
 
@@ -62,6 +65,41 @@ void operacionError()
 {
     printf("%s %d\n", mensajedeError, numeroLinea);
     exit(0);
+}
+
+int palabraReservada()
+{
+    char c = obtenerSiguienteCaracter();
+    char construirPalabra [LARGO_PALABRAS_RESERVADAS];
+    int contador, palabra, estadoActual;
+    palabra = contador = estadoActual = 0;
+    
+    while(c != ' ' && c != '\n' && c != '\t' && c != EOF && estadoActual != -1 && contador<LARGO_PALABRAS_RESERVADAS)
+    {
+        if(isalpha(c))
+        {
+            construirPalabra[contador++] = c;
+        }
+        else
+        {
+            estadoActual = -1;
+        }
+        c = obtenerSiguienteCaracter();
+    }
+    construirPalabra[contador]= '\0';
+
+    for(palabra = 0; palabra < PALABRAS_RESERVADAS; ++palabra)
+    {
+        if(strcmp(diccionario[palabra], construirPalabra)== 0)
+        {
+            return 1;
+        }
+    
+    }
+
+
+    rechazarPalabra();
+    return -1;
 }
 
 int identificador()
@@ -117,7 +155,7 @@ int identificador()
     {
         return estadoActual;
     }
-    
+    rechazarPalabra();
     return -1;
 }
 
@@ -223,10 +261,15 @@ int main()
         {
             aceptarEspacio();
         }
+        else if(palabraReservada()!=-1)
+        {
+            aceptarPalabra();
+            puts("Palabra reservada");
+        }
         else if(identificador() != -1)
         {
             aceptarPalabra();
-            puts("identificador");
+            puts("Identificador");
         }
         else
         {
