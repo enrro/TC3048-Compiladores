@@ -53,7 +53,7 @@ void rechazarPalabra()
 
 char obtenerSiguienteCaracter()
 {
-    offset = ftell(avance);
+    fseek(offset, ftell(avance), SEEK_SET);
     return fgetc(avance);
 }
 
@@ -108,6 +108,7 @@ int operadoresLogicos()
     {
         if(strcmp(arrOperadoresLogicos[palabra], construirPalabra)== 0)
         {
+            fseek(avance, ftell(offset), SEEK_SET);
             return 1;
         }
     
@@ -143,6 +144,7 @@ int palabraReservada()
     {
         if(strcmp(palabrasReservadas[palabra], construirPalabra)== 0)
         {
+            fseek(avance, ftell(offset), SEEK_SET);
             return 1;
         }
     
@@ -214,6 +216,7 @@ int operadorAsignacion()
     
     if(estadoActual == 1)
     {
+        fseek(avance, ftell(offset), SEEK_SET);
         return estadoActual;
     }
     rechazarPalabra();
@@ -257,6 +260,7 @@ int operadoresAritmeticos()
     
     if(estadoActual == 1 || estadoActual == 2 || estadoActual == 3 || estadoActual == 4)
     {
+        fseek(avance, ftell(offset), SEEK_SET);
         return estadoActual;
     }
     rechazarPalabra();
@@ -336,6 +340,7 @@ int signosPuntuacion()
     
     if(estadoActual == 1 || estadoActual == 2 || estadoActual == 3)
     {
+        fseek(avance, ftell(offset), SEEK_SET);
         return estadoActual;
     }
     rechazarPalabra();
@@ -381,12 +386,10 @@ int identificador()
         }
         c = obtenerSiguienteCaracter();
     }
-    if(estadoActual == 1)
-    {
 
-    }
     if(estadoActual == 1)
     {
+        fseek(avance, ftell(offset), SEEK_SET);
         return estadoActual;
     }
     rechazarPalabra();
@@ -496,6 +499,7 @@ int numeros()
 
     if (estadoActual == 2 || estadoActual == 3 || estadoActual == 4 || estadoActual == 6 || estadoActual == 8)
     {
+        fseek(avance, ftell(offset), SEEK_SET);
         return estadoActual;
     }
     rechazarPalabra();
@@ -553,6 +557,7 @@ int oprel()
 
     if (estadoActual == 2 || estadoActual == 4 || estadoActual == 5 || estadoActual == 6 || estadoActual == 7 || estadoActual == 8)
     {
+        fseek(avance, ftell(offset), SEEK_SET);
         return estadoActual;
     }
     // if the word is rejected then we need to move the pointer to the beginning if the word.
