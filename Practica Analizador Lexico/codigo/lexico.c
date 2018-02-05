@@ -18,7 +18,7 @@ void aceptarPalabra()
     long inicioPalabra = ftell(inicioLexema);
     long finPalabra = ftell(avance);
     // fgets prints whatever is between the starting point and the end point
-    fgets(buffer, finPalabra - inicioPalabra+1, inicioLexema);
+    fgets(buffer, finPalabra - inicioPalabra + 1, inicioLexema);
     printf ("[%s] ", buffer);
     fseek(inicioLexema, finPalabra, SEEK_SET);
 }
@@ -44,12 +44,14 @@ char obtenerSiguienteCaracter()
 int equalizer()
 {
     char c = obtenerSiguienteCaracter();
+    printf("afuera %d\n", c);
     if (c == ' ' || c =='\n' || c == '\t')
     {
         if(c == '\n')
         {
             ++numeroLinea;
         }
+        printf("%d\n", c);
         return 1;
     }
     return -1;
@@ -64,7 +66,7 @@ void operacionError()
 int oprel()
 {
     int estadoActual = 0;
-    char c = obtenerSiguienteCaracter();
+    int c = obtenerSiguienteCaracter();
 
     while (c != ' ' && c != '\n' && c != '\t' && c != EOF && estadoActual != -1)
     {
@@ -105,16 +107,12 @@ int oprel()
             break;
         }
         
-        printf("arriba %c %d\n", c, c);
-        // printf("%d\n", estadoActual);
         // using the function below is a little noisy with the equalizer function, since it avoid
         // the detection of the space that follows the relation operator. In action is not really much
         // important because after a word is defined there always follows a space. 
         // some cases where this is important is where there is an error after the expression like in 
         // ===. more testing is required. 
         c = obtenerSiguienteCaracter();
-        printf("abajo %c %d\n", c, c);
-        printf("%d\n",(c != ' ' && c != '\n' ));
         // despues de mas experimentacion me di cuenta de que este metodo es de gran ayuda. trabaja en 
         // conjunto con las condiciones que se encuentran en la parte superior y acotan la participacion
         // de ciertos caracteres dentro del programa. Ya que la unica forma de salir es mediante 
@@ -126,7 +124,7 @@ int oprel()
     {
         return estadoActual;
     }
-    rechazarPalabra;
+    rechazarPalabra();
     return -1;
 }
 
