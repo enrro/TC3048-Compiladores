@@ -9,7 +9,7 @@
 FILE *inicioLexema, *avance;
 int numeroLinea = 1;
 char ultimoLexema[100];
-char diccionario[PALABRAS_RESERVADAS][LARGO_PALABRAS_RESERVADAS] = {"program",
+char palabrasReservadas[PALABRAS_RESERVADAS][LARGO_PALABRAS_RESERVADAS] = {"program",
                                                                 "var","begin",
                                                                 "end","if",
                                                                 "then","else"};
@@ -45,6 +45,11 @@ char obtenerSiguienteCaracter()
     return fgetc(avance);
 }
 
+int isNormalChar(int c)
+{
+    return (c != ' ' && c != '\n' && c != '\t' && c != EOF);
+}
+
 int equalizer()
 {
     char c = obtenerSiguienteCaracter();
@@ -74,7 +79,7 @@ int palabraReservada()
     int contador, palabra, estadoActual;
     palabra = contador = estadoActual = 0;
     
-    while(c != ' ' && c != '\n' && c != '\t' && c != EOF && estadoActual != -1 && contador<LARGO_PALABRAS_RESERVADAS)
+    while(isNormalChar(c) && estadoActual != -1 && contador<LARGO_PALABRAS_RESERVADAS)
     {
         if(isalpha(c))
         {
@@ -90,7 +95,7 @@ int palabraReservada()
 
     for(palabra = 0; palabra < PALABRAS_RESERVADAS; ++palabra)
     {
-        if(strcmp(diccionario[palabra], construirPalabra)== 0)
+        if(strcmp(palabrasReservadas[palabra], construirPalabra)== 0)
         {
             return 1;
         }
@@ -102,15 +107,44 @@ int palabraReservada()
     return -1;
 }
 
+int caracterDelimitacion()
+{
+    char c = obtenerSiguienteCaracter();
+    int estadoActual = 0;
+
+    switch(c)
+    {
+        case '(':
+            estadoActual = 1;
+            break;
+        case ')':
+            estadoActual = 2;
+            break;
+        case '[':
+            estadoActual = 3;
+            break;
+        case ']':
+            estadoActual = 4;
+            break;
+        default:
+            estadoActual = -1;
+            break;
+    c = obtenerSiguienteCaracter();
+    }
+    if(estadoActual == 1 || estadoActual == 2 || estadoActual == 3 || estadoActual == 4)
+    {
+        return estadoActual;
+    }
+    rechazarPalabra();
+    return -1;
+}
+
 int identificador()
 {
     int estadoActual = 0;
     char c = obtenerSiguienteCaracter();
-    while(c != ' ' && c != '\n' && c != '\t' && c != EOF && estadoActual != -1)
+    while(isNormalChar(c) && estadoActual != -1)
     {
-        // printf("estadoAc %d \n", estadoActual);
-        // printf("caracter %c\n", c);
-        
         if(isalpha(c))
         {
             estadoActual = 1;
@@ -143,13 +177,7 @@ int identificador()
             }
         }
         c = obtenerSiguienteCaracter();
-        // printf("dentro del loop %d\n", estadoActual);
-        // printf("caracter abajo %d\n", c);
-        
-        // printf("abajo %d \n", c);
-        // printf("condicion %d \n", (c != ' ' && c != '\n' && c != '\t' && c != EOF && estadoActual != -1));
     }
-    //printf("fuera del loop estado actual %d \n", estadoActual);
     
     if(estadoActual == 1)
     {
@@ -165,7 +193,7 @@ int oprel()
     int c = obtenerSiguienteCaracter();
      
 
-    while (c != ' ' && c != '\n' && c != '\t' && c != EOF && estadoActual != -1)
+    while (isNormalChar(c) && estadoActual != -1)
     {
         switch (estadoActual){
         case 0:
@@ -270,6 +298,25 @@ int main()
         {
             aceptarPalabra();
             puts("Identificador");
+        }
+        else if((c=caracterDelimitacion())!=-1)
+        {
+            aceptarPalabra();
+            switch(c)
+            {
+                case 1:
+                    puts("Parentesis izquierdo");
+                    break;
+                case 2:
+                    puts("Parentesis derecho");
+                    break;
+                case 3:
+                    puts("Corchete izquierdo");
+                    break;
+                case 4:
+                    puts("Corchete derecho");
+                    break;
+            }
         }
         else
         {
