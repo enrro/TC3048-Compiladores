@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
 
 FILE *inicioLexema, *avance;
 int numeroLinea = 1;
@@ -14,18 +16,17 @@ int error_token = 0;
 void aceptarPalabra()
 {
     char buffer [100];
-
+    
     long inicioPalabra = ftell(inicioLexema);
     long finPalabra = ftell(avance);
     // fgets prints whatever is between the starting point and the end point
     fgets(buffer, finPalabra - inicioPalabra + 1, inicioLexema);
-    printf ("[%s] ", buffer);
+    printf ("[%s]\t", buffer);
     fseek(inicioLexema, finPalabra, SEEK_SET);
 }
 
 void aceptarEspacio()
 {
-    long inicioPalabra = ftell(inicioLexema);
     long finPalabra = ftell(avance);
     fseek(inicioLexema, finPalabra, SEEK_SET);
 }
@@ -44,16 +45,16 @@ char obtenerSiguienteCaracter()
 int equalizer()
 {
     char c = obtenerSiguienteCaracter();
-    printf("afuera %d\n", c);
+    
     if (c == ' ' || c =='\n' || c == '\t')
     {
         if(c == '\n')
         {
             ++numeroLinea;
         }
-        printf("%d\n", c);
         return 1;
     }
+    rechazarPalabra();
     return -1;
 }
 
@@ -63,10 +64,68 @@ void operacionError()
     exit(0);
 }
 
+int identificador()
+{
+    int estadoActual = 0;
+    char c = obtenerSiguienteCaracter();
+    while(c != ' ' && c != '\n' && c != '\t' && c != EOF && estadoActual != -1)
+    {
+        // printf("estadoAc %d \n", estadoActual);
+        // printf("caracter %c\n", c);
+        
+        if(isalpha(c))
+        {
+            estadoActual = 1;
+        }
+        else if(c == '_')
+        {
+            estadoActual = 2;
+        }
+        else
+        {
+            estadoActual = -1;
+        }
+        if(estadoActual == 1)
+        {
+            estadoActual = (isalpha(c) || isdigit(c) || c == '_') ? 1 : -1;
+        }
+        else if(estadoActual == 2)
+        {
+            if(isalpha(c))
+            {
+                estadoActual = 1;
+            }
+            else if(c == '_' || isdigit(c))
+            {
+                estadoActual = 2;
+            }
+            else
+            {
+                estadoActual = -1;
+            }
+        }
+        c = obtenerSiguienteCaracter();
+        // printf("dentro del loop %d\n", estadoActual);
+        // printf("caracter abajo %d\n", c);
+        
+        // printf("abajo %d \n", c);
+        // printf("condicion %d \n", (c != ' ' && c != '\n' && c != '\t' && c != EOF && estadoActual != -1));
+    }
+    //printf("fuera del loop estado actual %d \n", estadoActual);
+    
+    if(estadoActual == 1)
+    {
+        return estadoActual;
+    }
+    
+    return -1;
+}
+
 int oprel()
 {
     int estadoActual = 0;
     int c = obtenerSiguienteCaracter();
+     
 
     while (c != ' ' && c != '\n' && c != '\t' && c != EOF && estadoActual != -1)
     {
@@ -106,25 +165,17 @@ int oprel()
             estadoActual = -1;
             break;
         }
-        
-        // using the function below is a little noisy with the equalizer function, since it avoid
-        // the detection of the space that follows the relation operator. In action is not really much
-        // important because after a word is defined there always follows a space. 
-        // some cases where this is important is where there is an error after the expression like in 
-        // ===. more testing is required. 
         c = obtenerSiguienteCaracter();
-        // despues de mas experimentacion me di cuenta de que este metodo es de gran ayuda. trabaja en 
-        // conjunto con las condiciones que se encuentran en la parte superior y acotan la participacion
-        // de ciertos caracteres dentro del programa. Ya que la unica forma de salir es mediante 
-        // caracteres blancos. ahora === no permite dar una salida al bucle
-        // this example could lead to some kind of error detection.
+
     }
 
     if (estadoActual == 2 || estadoActual == 4 || estadoActual == 5 || estadoActual == 6 || estadoActual == 7 || estadoActual == 8)
     {
         return estadoActual;
     }
+    // if the word is rejected then we need to move the pointer to the beginning if the word.
     rechazarPalabra();
+    
     return -1;
 }
 
@@ -149,7 +200,7 @@ int main()
             switch(c)
             {
                 case 2:
-                    printf("Operador relacion \n");
+                    printf("Operador igualdad \n");
                     break;
                 case 4:
                     printf("Operador desigualdad \n");
@@ -172,9 +223,14 @@ int main()
         {
             aceptarEspacio();
         }
+        else if(identificador() != -1)
+        {
+            aceptarPalabra();
+            puts("identificador");
+        }
         else
         {
-            rechazarPalabra();
+            operacionError();
         }
 
     }
