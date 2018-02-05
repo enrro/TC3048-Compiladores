@@ -139,6 +139,41 @@ int caracterDelimitacion()
     return -1;
 }
 
+int operadorAsignacion()
+{
+    char c = obtenerSiguienteCaracter();
+    int estadoActual = 0;
+    while(isNormalChar(c) && estadoActual != -1)
+    {
+        switch(estadoActual)
+        {
+        case 0:
+            switch(c)
+            {
+            case '=':
+                estadoActual = 1;
+                break;
+            default:
+                estadoActual = -1;
+                break;
+            }
+            break;
+        default:
+            estadoActual = -1;
+        }
+        c = obtenerSiguienteCaracter();
+        
+    }
+    
+    if(estadoActual == 1)
+    {
+        return estadoActual;
+    }
+    rechazarPalabra();
+    return -1;
+}
+
+
 int identificador()
 {
     int estadoActual = 0;
@@ -317,6 +352,11 @@ int main()
                     puts("Corchete derecho");
                     break;
             }
+        }
+        else if(operadorAsignacion()!=-1)
+        {
+            aceptarPalabra();
+            puts("Asignacion");
         }
         else
         {
