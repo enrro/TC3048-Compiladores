@@ -5,10 +5,13 @@
 
 #define PALABRAS_RESERVADAS       7
 #define LARGO_PALABRAS_RESERVADAS 8
+#define OPERADORES_LOGICOS        3
+#define LARGO_OPERADORES_LOGICOS  4
 
 FILE *inicioLexema, *avance;
 int numeroLinea = 1;
 char ultimoLexema[100];
+char arrOperadoresLogicos[OPERADORES_LOGICOS][LARGO_OPERADORES_LOGICOS] = {"and", "or", "not"};
 char palabrasReservadas[PALABRAS_RESERVADAS][LARGO_PALABRAS_RESERVADAS] = {"program",
                                                                 "var","begin",
                                                                 "end","if",
@@ -24,7 +27,7 @@ void aceptarPalabra()
     long finPalabra = ftell(avance);
     // fgets prints whatever is between the starting point and the end point
     fgets(buffer, finPalabra - inicioPalabra + 1, inicioLexema);
-    printf ("[%s]\t", buffer);
+    printf ("[%s]\t\t", buffer);
     fseek(inicioLexema, finPalabra, SEEK_SET);
 }
 
@@ -70,6 +73,40 @@ void operacionError()
 {
     printf("%s %d\n", mensajedeError, numeroLinea);
     exit(0);
+}
+
+int operadoresLogicos()
+{
+    char c = obtenerSiguienteCaracter();
+    char construirPalabra [LARGO_OPERADORES_LOGICOS];
+    int contador, palabra, estadoActual;
+    palabra = contador = estadoActual = 0;
+    
+    while(isNormalChar(c) && estadoActual != -1 && contador<LARGO_OPERADORES_LOGICOS)
+    {
+        if(isalpha(c))
+        {
+            construirPalabra[contador++] = c;
+        }
+        else
+        {
+            estadoActual = -1;
+        }
+        c = obtenerSiguienteCaracter();
+    }
+    construirPalabra[contador]= '\0';
+    for(palabra = 0; palabra < OPERADORES_LOGICOS; ++palabra)
+    {
+        if(strcmp(arrOperadoresLogicos[palabra], construirPalabra)== 0)
+        {
+            return 1;
+        }
+    
+    }
+
+
+    rechazarPalabra();
+    return -1;
 }
 
 int palabraReservada()
@@ -368,6 +405,11 @@ int main()
         {
             aceptarPalabra();
             puts("Palabra reservada");
+        }
+        else if(operadoresLogicos()!=-1)
+        {
+            aceptarPalabra();
+            puts("Operador logico");
         }
         else if(identificador() != -1)
         {
