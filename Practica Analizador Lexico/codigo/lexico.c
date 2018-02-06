@@ -8,7 +8,7 @@
 #define OPERADORES_LOGICOS        3
 #define LARGO_OPERADORES_LOGICOS  4
 
-FILE *inicioLexema, *avance, *offset;
+FILE *inicioLexema, *avance, *finalOfFile;
 int numeroLinea = 1;
 char ultimoLexema[100];
 char arrOperadoresLogicos[OPERADORES_LOGICOS][LARGO_OPERADORES_LOGICOS] = {"and", "or", "not"};
@@ -22,11 +22,16 @@ int error_token = 0;
 void aceptarPalabra()
 {
     char buffer [100];
+
     
     long inicioPalabra = ftell(inicioLexema);
     long finPalabra = ftell(avance);
+    if(ftell(avance)== ftell(finalOfFile))
+    {
+        ++finPalabra;
+    }
     // fgets prints whatever is between the starting point and the end point
-    fgets(buffer, finPalabra - inicioPalabra + 1, inicioLexema);
+    fgets(buffer, finPalabra - inicioPalabra, inicioLexema);
     printf ("[%s]\t\t", buffer);
     fseek(inicioLexema, finPalabra, SEEK_SET);
 }
@@ -53,7 +58,6 @@ void rechazarPalabra()
 
 char obtenerSiguienteCaracter()
 {
-    fseek(offset, ftell(avance), SEEK_SET);
     return fgetc(avance);
 }
 
@@ -113,7 +117,6 @@ int operadoresLogicos()
     {
         if(strcmp(arrOperadoresLogicos[palabra], construirPalabra)== 0)
         {
-            fseek(avance, ftell(offset), SEEK_SET);
             return 1;
         }
     
@@ -149,7 +152,6 @@ int palabraReservada()
     {
         if(strcmp(palabrasReservadas[palabra], construirPalabra)== 0)
         {
-            fseek(avance, ftell(offset), SEEK_SET);
             return 1;
         }
     
@@ -221,7 +223,6 @@ int operadorAsignacion()
     
     if(estadoActual == 1)
     {
-        fseek(avance, ftell(offset), SEEK_SET);
         return estadoActual;
     }
     rechazarPalabra();
@@ -265,7 +266,6 @@ int operadoresAritmeticos()
     
     if(estadoActual == 1 || estadoActual == 2 || estadoActual == 3 || estadoActual == 4)
     {
-        fseek(avance, ftell(offset), SEEK_SET);
         return estadoActual;
     }
     rechazarPalabra();
@@ -345,7 +345,6 @@ int signosPuntuacion()
     
     if(estadoActual == 1 || estadoActual == 2 || estadoActual == 3)
     {
-        fseek(avance, ftell(offset), SEEK_SET);
         return estadoActual;
     }
     rechazarPalabra();
@@ -394,7 +393,6 @@ int identificador()
 
     if(estadoActual == 1)
     {
-        fseek(avance, ftell(offset), SEEK_SET);
         return estadoActual;
     }
     rechazarPalabra();
@@ -504,7 +502,6 @@ int numeros()
 
     if (estadoActual == 2 || estadoActual == 3 || estadoActual == 4 || estadoActual == 6 || estadoActual == 8)
     {
-        fseek(avance, ftell(offset), SEEK_SET);
         return estadoActual;
     }
     rechazarPalabra();
@@ -562,7 +559,6 @@ int oprel()
 
     if (estadoActual == 2 || estadoActual == 4 || estadoActual == 5 || estadoActual == 6 || estadoActual == 7 || estadoActual == 8)
     {
-        fseek(avance, ftell(offset), SEEK_SET);
         return estadoActual;
     }
     // if the word is rejected then we need to move the pointer to the beginning if the word.
@@ -582,8 +578,9 @@ int main()
 {
     inicioLexema = fopen("origen.txt", "r");
     avance = fopen("origen.txt", "r");
-    offset = fopen("origen.txt", "r");
-    
+    finalOfFile = fopen("origen.txt", "r");
+    fseek(finalOfFile, 0, SEEK_END);
+
     int c; 
 
     while (!isfeof())
