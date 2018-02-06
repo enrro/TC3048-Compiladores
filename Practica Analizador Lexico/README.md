@@ -1,0 +1,1 @@
+El programa fue probado y hecho en un sistema operativo GNU + linux, puede que no se comporte correctamente en windows debido a como se maneja la terminal.
