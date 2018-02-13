@@ -74,7 +74,6 @@ int isPuntuacion(int c)
 int equalizer()
 {
     char c = obtenerSiguienteCaracter();
-    
     if (c == ' ' || c =='\n' || c == '\t')
     {
         if(c == '\n')
@@ -131,14 +130,18 @@ int palabraReservada()
 {
     char c = obtenerSiguienteCaracter();
     char construirPalabra [LARGO_PALABRAS_RESERVADAS];
-    int contador, palabra, estadoActual;
-    palabra = contador = estadoActual = 0;
+    int contador, palabra, estadoActual, noAlfa;
+    palabra = contador = estadoActual = noAlfa =  0;
     
     while(isNormalChar(c) && c != '(' && isPuntuacion(c) && estadoActual != -1 && contador<LARGO_PALABRAS_RESERVADAS)
     {
         if(isalpha(c))
         {
             construirPalabra[contador++] = c;
+        }
+        else if(!isalpha(c))
+        {
+            ++noAlfa;
         }
         else
         {
@@ -147,16 +150,17 @@ int palabraReservada()
         c = obtenerSiguienteCaracter();
     }
     construirPalabra[contador]= '\0';
-
-    for(palabra = 0; palabra < PALABRAS_RESERVADAS; ++palabra)
+    if(noAlfa==0)
     {
-        if(strcmp(palabrasReservadas[palabra], construirPalabra)== 0)
+        for(palabra = 0; palabra < PALABRAS_RESERVADAS; ++palabra)
         {
-            return 1;
+            if(strcmp(palabrasReservadas[palabra], construirPalabra)== 0)
+            {
+                return 1;
+            }
+        
         }
-    
     }
-
 
     rechazarPalabra();
     return -1;
@@ -301,10 +305,13 @@ int comentarios()
         {
             c = obtenerSiguienteCaracter();
         }
+
     }
 
     if(estadoActual == 2)
     {
+        ++numeroLinea;
+        
         return estadoActual;
     }
     rechazarPalabra();
@@ -355,39 +362,61 @@ int identificador()
 {
     int estadoActual = 0;
     char c = obtenerSiguienteCaracter();
+
+
     while(isNormalChar(c) && c != ','  && c != ')' && estadoActual != -1)
     {
-        if(isalpha(c))
+        switch(estadoActual)
         {
-            estadoActual = 1;
-        }
-        else if(c == '_')
-        {
-            estadoActual = 2;
-        }
-        else
-        {
-            estadoActual = -1;
-        }
-        if(estadoActual == 1)
-        {
-            estadoActual = (isalpha(c) || isdigit(c) || c == '_') ? 1 : -1;
-        }
-        else if(estadoActual == 2)
-        {
-            if(isalpha(c))
-            {
-                estadoActual = 1;
-            }
-            else if(c == '_' || isdigit(c))
-            {
-                estadoActual = 2;
-            }
-            else
-            {
+            case 0:
+                if(isalpha(c))
+                {
+                    estadoActual = 1;
+                }
+                else if(c == '_')
+                {
+                    estadoActual = 2;
+
+                }
+                else
+                {
+                    estadoActual = -1;
+
+                }
+            break;
+            case 1:
+                if(isalpha(c))
+                {
+                    estadoActual = 1;
+                }
+                else if(c == '_' || isdigit(c))
+                {
+                    estadoActual = 1;
+                }
+                else
+                {
+                    estadoActual = -1;
+                }
+                break;
+            case 2:
+                if(isalpha(c))
+                {
+                    estadoActual = 1;
+                }
+                else if(c == '_' || isdigit(c))
+                {
+                    estadoActual = 2;
+                }
+                else
+                {
+                    estadoActual = -1;
+                }
+                break;
+            default:
                 estadoActual = -1;
-            }
+
         }
+        
         c = obtenerSiguienteCaracter();
     }
 
@@ -402,7 +431,7 @@ int numeros()
 {
     int estadoActual = 0;
     char c = obtenerSiguienteCaracter();
-     
+    
 
     while (isNormalChar(c) && estadoActual != -1 && c != ';')
     {
@@ -497,7 +526,6 @@ int numeros()
             break;
         }
         c = obtenerSiguienteCaracter();
-
     }
 
     if (estadoActual == 2 || estadoActual == 3 || estadoActual == 4 || estadoActual == 6 || estadoActual == 8)
