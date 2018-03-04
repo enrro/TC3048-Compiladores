@@ -4,6 +4,7 @@
 *.obj
 *.elf
 *.out
+*.exe
 
 ### VisualStudioCode ###
 .vscode/*
