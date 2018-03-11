@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-
+// constants
+#define MAX_LENGTH 15
+#define MAX_TOKENS 4
 // methods
 int programa();
 int secuencia_sent();
@@ -24,22 +26,15 @@ void senial_error();
 
 //globals
 int iterador = 0;
-char token[2][15] = {"read", "identificador"};
+char token[MAX_TOKENS][MAX_LENGTH] = {"write", "numero"};
 
 int main()
 {
-    int i;
-
-    for(i = 0; i<2; i++)
-    {
-        printf("%15s,  %d\n",token[i], i);
-    }
-    //printf("resultado de la comparacion %d \n ", strcmp(token[1], "1"));
-
     programa(token);
 
-    //system("PAUSE");
     system("read -p 'Press Enter to continue...' var");
+    //windows sentences
+    //system("PAUSE");
     //getc(stdin);
     return 0;
 }
@@ -47,20 +42,19 @@ int main()
 
 int programa()
 {
-    secuencia_sent();
-    return 1;
+    return secuencia_sent();
 }
 
 
 int secuencia_sent()
 {
-    sentencia();
+    int res = sentencia();
     while(strcmp(token[iterador], ";")==0)
     {
         empatar();
-        sentencia();
+        res = sentencia();
     }
-    return 1;
+    return res;
 }
 
 int sentencia()
@@ -89,6 +83,7 @@ int sentencia()
     {
         senial_error();
     }
+    return 1;
 }
 
 int sent_if()
@@ -96,23 +91,25 @@ int sent_if()
     if((strcmp(token[iterador], "if") == 0))
     {
         empatar();
-        expre();
-        if((strcmp(token[iterador], "then") == 0))
+        if(expre())
         {
-            empatar();
-            secuencia_sent();
-            if((strcmp(token[iterador], "else") == 0))
+            if((strcmp(token[iterador], "then") == 0))
             {
                 empatar();
-                secuencia_sent();
+                if(secuencia_sent())
+                {
+                    if((strcmp(token[iterador], "else") == 0))
+                    {
+                        empatar();
+                        return secuencia_sent();
+                    }
+                    if((strcmp(token[iterador], "end") == 0))
+                    {
+                        empatar();
+                        return 1;
+                    }
+                }
             }
-            if((strcmp(token[iterador], "end") == 0))
-            {
-                empatar();
-                return 1;
-            }
-            
-            
         }
     }
     return 0;
@@ -123,11 +120,13 @@ int sent_repeat()
     if((strcmp(token[iterador], "repeat") == 0))
     {
         empatar();
-        secuencia_sent();
-        if((strcmp(token[iterador], "until") == 0))
+        if(secuencia_sent())
         {
-            empatar();
-            expre();
+            if((strcmp(token[iterador], "until") == 0))
+            {
+                empatar();
+                return expre();
+            }
         }
     }
     return 0;
@@ -141,7 +140,7 @@ int sent_assign()
         if((strcmp(token[iterador], ":=") == 0))
         {
             empatar();
-            expre();
+            return expre();
         }
     }
     return 0;
