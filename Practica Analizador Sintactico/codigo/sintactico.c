@@ -3,8 +3,8 @@
 #include <ctype.h>
 #include <string.h>
 // constants
-#define MAX_LENGTH 15
-#define MAX_TOKENS 4
+#define BUFFER 15
+#define MAX_TOKENS 15
 // methods
 int programa();
 int secuencia_sent();
@@ -26,12 +26,22 @@ void senial_error();
 
 //globals
 int iterador = 0;
-char token[MAX_TOKENS][MAX_LENGTH] = {"write", "numero"};
+char token[MAX_TOKENS][BUFFER] = {  "if",
+                                    "numero",
+                                    "<",
+                                    "numero",
+                                    "then",
+                                    "read",
+                                    "identificador",
+                                    "else",
+                                    "read",
+                                    "identificador",
+                                    "end"};
 
 int main()
 {
     programa(token);
-
+    printf("%s \n", "programa finalizado sin anomalias");
     system("read -p 'Press Enter to continue...' var");
     //windows sentences
     //system("PAUSE");
