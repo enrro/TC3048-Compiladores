@@ -24,7 +24,7 @@ void senial_error();
 
 //globals
 int iterador = 0;
-char token[2][10] = {"write", "1"};
+char token[2][15] = {"read", "identificador"};
 
 int main()
 {
@@ -32,7 +32,7 @@ int main()
 
     for(i = 0; i<2; i++)
     {
-        printf("%s, \t  %d\n",token[i], i);
+        printf("%15s,  %d\n",token[i], i);
     }
     //printf("resultado de la comparacion %d \n ", strcmp(token[1], "1"));
 
@@ -47,7 +47,6 @@ int main()
 
 int programa()
 {
-    printf("%s\n", token[iterador]);
     secuencia_sent();
     return 1;
 }
@@ -150,47 +149,134 @@ int sent_assign()
 
 int sent_read()
 {
+    if((strcmp(token[iterador], "read") == 0))
+    {
+        empatar();
+        if((strcmp(token[iterador], "identificador") == 0))
+        {
+            empatar();
+            return 1;
+        }
+    }    
+    return 0;
 
 }
 
 int sent_write()
 {
-
+    if((strcmp(token[iterador], "write") == 0))
+    {
+        empatar();
+        return expre();
+    }
+    return 0;
 }
 
 int expre()
 {
-
+    int res = exp_simple();
+    if(res && op_comparacion())
+    {
+        return exp_simple();
+    }
+    return res;
 }
 
 int op_comparacion()
 {
-
+    if((strcmp(token[iterador], "<") == 0))
+    {
+        empatar();
+        return 1;
+    }
+    else if ((strcmp(token[iterador], "=") == 0))
+    {
+        empatar();
+        return 1;
+    }
+    else
+        return 0;
 }
 
 int exp_simple()
 {
+    int res = term();
+    if(res && opsum())
+    {
+        return term();
+    }
+    return res;
 
 }
 
 int opsum()
 {
-
+    if((strcmp(token[iterador], "+") == 0))
+    {
+        empatar();
+        return 1;
+    }
+    else if ((strcmp(token[iterador], "-") == 0))
+    {
+        empatar();
+        return 1;
+    }
+    else
+        return 0;
 }
 
 int term()
 {
-
+    int res = factor();
+    if(res && opmult())
+    {
+        return factor();
+    }
+    return res;
 }
 
 int opmult()
 {
-
+    if((strcmp(token[iterador], "*") == 0))
+    {
+        empatar();
+        return 1;
+    }
+    else if ((strcmp(token[iterador], "/") == 0))
+    {
+        empatar();
+        return 1;
+    }
+    else
+        return 0;
 }
 
 int factor()
 {
-
+    if((strcmp(token[iterador], "(") == 0))
+    {
+        empatar();
+        if(expre())
+        {
+            if((strcmp(token[iterador], ")") == 0))
+                empatar();
+                return 1;
+        }
+    }
+    else if((strcmp(token[iterador], "numero") == 0))
+    {
+        empatar();
+        return 1;
+    }
+    else if((strcmp(token[iterador], "identificador") == 0))
+    {
+        empatar();
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 void senial_error()
