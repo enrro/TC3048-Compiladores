@@ -294,17 +294,20 @@ void empatar()
 void cargarArchivo()
 {
     FILE* inp;
-    inp = fopen("origen.txt","r");		//filename of your data file
+    inp = fopen("origenTokens.txt","r");		//filename of your data file
     int i = 0;
-    while(1){
+    while(1)
+    {
         char r = (char)fgetc(inp);
         int k = 0;
-        while(r!=' ' && !feof(inp)){	//read till , or EOF
+        while(r!=' ' && !feof(inp))     //read till , or EOF
+        {	
             token[i][k++] = r;			//store in array
             r = (char)fgetc(inp);
         }
         token[i][k]=0;		//make last character of string null 
-        if(feof(inp)){		//check again for EOF
+        if(feof(inp))       //check again for EOF
+        {		
             break;
         }
         i++;
@@ -312,7 +315,8 @@ void cargarArchivo()
     int j;
 
     printf("Los tokens leidos son: \n");	//print array
-    for(j = 0;j<=i;j++){
+    for(j = 0;j<=i;j++)
+    {
         printf("%s\n",token[j] );	//print array
     }
 }
