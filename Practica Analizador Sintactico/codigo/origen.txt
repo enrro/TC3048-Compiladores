@@ -1,6 +1,6 @@
 // com 
 // entario 
-begin 
+begin ; 
 x = 40 
 y = _0x3d5ar;    // comentario 
 z = .32e-4;   // otro comentario 
