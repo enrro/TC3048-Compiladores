@@ -3,21 +3,216 @@
 #include <ctype.h>
 #include <string.h>
 
+//constants
 #define PALABRAS_RESERVADAS       7
 #define LARGO_PALABRAS_RESERVADAS 8
 #define OPERADORES_LOGICOS        3
 #define LARGO_OPERADORES_LOGICOS  4
 
-FILE *inicioLexema, *avance, *finalOfFile;
+//functions
+void writeToFile(char *text);
+void aceptarPalabra();
+void aceptarComentario();
+void aceptarEspacio();
+void rechazarPalabra();
+char obtenerSiguienteCaracter();
+int isNormalChar(int c);
+int isPuntuacion(int c);
+int equalizer();
+void operacionError();
+int operadoresLogicos();
+int palabraReservada();
+int caracterDelimitacion();
+int operadorAsignacion();
+int operadoresAritmeticos();
+int comentarios();
+int signosPuntuacion();
+int identificador();
+int numeros();
+int oprel();
+int isfeof();
+
+
+FILE *inicioLexema, *avance, *finalOfFile, *fp;
 int numeroLinea = 1;
 char ultimoLexema[100];
 char arrOperadoresLogicos[OPERADORES_LOGICOS][LARGO_OPERADORES_LOGICOS] = {"and", "or", "not"};
 char palabrasReservadas[PALABRAS_RESERVADAS][LARGO_PALABRAS_RESERVADAS] = {"program",
-                                                                "var","begin",
-                                                                "end","if",
-                                                                "then","else"};
+                                                                            "var","begin",
+                                                                            "end","if",
+                                                                            "then","else"};
 char mensajedeError[] = "Error en la linea ";
 int error_token = 0;
+
+int main()
+{
+    inicioLexema = fopen("origen.txt", "r");
+    avance = fopen("origen.txt", "r");
+    finalOfFile = fopen("origen.txt", "r");
+    fp=fopen("test.txt", "w");
+    
+    fseek(finalOfFile, 0, SEEK_END);
+
+    int c; 
+    
+    while (!isfeof())
+    {
+        if ((c = oprel()) != -1)
+        {
+            aceptarPalabra();
+            switch(c)
+            {
+                case 2:
+                    printf("Operador igualdad \n");
+                    break;
+                case 4:
+                    printf("Operador desigualdad \n");
+                    break;
+                case 5:
+                    printf("Operador mayor que \n");
+                    break;
+                case 6:
+                    printf("Operador mayor ó igual que \n");
+                    break;
+                case 7:
+                    printf("Operador menor que \n");
+                    break;
+                case 8:
+                    printf("Operador menor ó igual que \n");
+                    break;
+            }
+        }
+        else if(equalizer() != -1)
+        {
+            aceptarEspacio();
+        }
+        else if(comentarios()!=-1)
+        {
+            aceptarComentario();
+        }
+        else if((c = numeros()) != -1)
+        {
+            aceptarPalabra();
+            switch(c)
+            {
+                case 2:
+                    puts("Numero natural");
+                    break;
+                case 3:
+                    puts("Numero octal");
+                    break;
+                case 4:
+                    puts("Numero hexadecimal");
+                    break;
+                case 6:
+                    puts("Numero de punto flotante");
+                    break;
+                case 8:
+                    puts("Numero de punto flotante");
+                    break;
+            }
+        }
+        else if(palabraReservada()!=-1)
+        {
+            aceptarPalabra();
+            puts("Palabra reservada");
+        }
+        else if(operadoresLogicos()!=-1)
+        {
+            aceptarPalabra();
+            puts("Operador logico");
+        }
+        else if(identificador() != -1)
+        {
+            aceptarPalabra();
+            puts("Identificador");
+        }
+        else if((c=caracterDelimitacion())!=-1)
+        {
+            aceptarPalabra();
+            switch(c)
+            {
+                case 1:
+                    puts("Parentesis izquierdo");
+                    break;
+                case 2:
+                    puts("Parentesis derecho");
+                    break;
+                case 3:
+                    puts("Corchete izquierdo");
+                    break;
+                case 4:
+                    puts("Corchete derecho");
+                    break;
+            }
+        }
+        else if((c=operadoresAritmeticos())!=-1)
+        {
+            aceptarPalabra();
+            switch(c)
+            {
+                case 1:
+                    puts("suma");
+                    break;
+                case 2:
+                    puts("resta");
+                    break;
+                case 3:
+                    puts("multiplicacion");
+                    break;
+                case 4:
+                    puts("division");
+                    break;
+            }
+        }
+        else if(operadorAsignacion()!=-1)
+        {
+            aceptarPalabra();
+            puts("Asignacion");
+        }
+        else if((c=signosPuntuacion()) !=-1)
+        {
+            aceptarPalabra();
+            switch(c)
+            {
+                case 1:
+                    puts("Punto");
+                    break;
+                case 2:
+                    puts("Coma");
+                    break;
+                case 3:
+                    puts("Punto y coma");
+                    break;
+            }
+        }
+        else
+        {
+            operacionError();
+        }
+
+    }
+
+    fclose(inicioLexema);
+    fclose(avance);
+    fclose(fp);
+    
+    //system("PAUSE");
+    system("read -p 'Press Enter to continue...' var");
+    //getc(stdin);
+    return 0;
+}
+
+void writeToFile(char *text)
+{
+    char* str = "string";
+    int x = 10;
+
+    if(fp == NULL)
+        exit(-1);
+    fprintf(fp, "%s \n", text);
+}
+
 
 void aceptarPalabra()
 {
@@ -33,6 +228,7 @@ void aceptarPalabra()
     // fgets prints whatever is between the starting point and the end point
     fgets(buffer, finPalabra - inicioPalabra, inicioLexema);
     printf ("[%s]\t\t", buffer);
+    writeToFile(buffer);
     fseek(inicioLexema, finPalabra, SEEK_SET);
 }
 void aceptarComentario()
@@ -600,159 +796,4 @@ int isfeof()
     char c = obtenerSiguienteCaracter();
     rechazarPalabra();
     return c == EOF;
-}
-
-int main()
-{
-    inicioLexema = fopen("origen.txt", "r");
-    avance = fopen("origen.txt", "r");
-    finalOfFile = fopen("origen.txt", "r");
-    fseek(finalOfFile, 0, SEEK_END);
-
-    int c; 
-
-    while (!isfeof())
-    {
-        if ((c = oprel()) != -1)
-        {
-            aceptarPalabra();
-            switch(c)
-            {
-                case 2:
-                    printf("Operador igualdad \n");
-                    break;
-                case 4:
-                    printf("Operador desigualdad \n");
-                    break;
-                case 5:
-                    printf("Operador mayor que \n");
-                    break;
-                case 6:
-                    printf("Operador mayor ó igual que \n");
-                    break;
-                case 7:
-                    printf("Operador menor que \n");
-                    break;
-                case 8:
-                    printf("Operador menor ó igual que \n");
-                    break;
-            }
-        }
-        else if(equalizer() != -1)
-        {
-            aceptarEspacio();
-        }
-        else if(comentarios()!=-1)
-        {
-            aceptarComentario();
-        }
-        else if((c = numeros()) != -1)
-        {
-            aceptarPalabra();
-            switch(c)
-            {
-                case 2:
-                    puts("Numero natural");
-                    break;
-                case 3:
-                    puts("Numero octal");
-                    break;
-                case 4:
-                    puts("Numero hexadecimal");
-                    break;
-                case 6:
-                    puts("Numero de punto flotante");
-                    break;
-                case 8:
-                    puts("Numero de punto flotante");
-                    break;
-            }
-        }
-        else if(palabraReservada()!=-1)
-        {
-            aceptarPalabra();
-            puts("Palabra reservada");
-        }
-        else if(operadoresLogicos()!=-1)
-        {
-            aceptarPalabra();
-            puts("Operador logico");
-        }
-        else if(identificador() != -1)
-        {
-            aceptarPalabra();
-            puts("Identificador");
-        }
-        else if((c=caracterDelimitacion())!=-1)
-        {
-            aceptarPalabra();
-            switch(c)
-            {
-                case 1:
-                    puts("Parentesis izquierdo");
-                    break;
-                case 2:
-                    puts("Parentesis derecho");
-                    break;
-                case 3:
-                    puts("Corchete izquierdo");
-                    break;
-                case 4:
-                    puts("Corchete derecho");
-                    break;
-            }
-        }
-        else if((c=operadoresAritmeticos())!=-1)
-        {
-            aceptarPalabra();
-            switch(c)
-            {
-                case 1:
-                    puts("suma");
-                    break;
-                case 2:
-                    puts("resta");
-                    break;
-                case 3:
-                    puts("multiplicacion");
-                    break;
-                case 4:
-                    puts("division");
-                    break;
-            }
-        }
-        else if(operadorAsignacion()!=-1)
-        {
-            aceptarPalabra();
-            puts("Asignacion");
-        }
-        else if((c=signosPuntuacion()) !=-1)
-        {
-            aceptarPalabra();
-            switch(c)
-            {
-                case 1:
-                    puts("Punto");
-                    break;
-                case 2:
-                    puts("Coma");
-                    break;
-                case 3:
-                    puts("Punto y coma");
-                    break;
-            }
-        }
-        else
-        {
-            operacionError();
-        }
-
-    }
-
-    fclose(inicioLexema);
-    fclose(avance);
-    //system("PAUSE");
-    system("read -p 'Press Enter to continue...' var");
-    //getc(stdin);
-    return 0;
 }
