@@ -4,13 +4,13 @@
 #include <string.h>
 
 //constants
-#define PALABRAS_RESERVADAS       7
+#define PALABRAS_RESERVADAS       12
 #define LARGO_PALABRAS_RESERVADAS 8
 #define OPERADORES_LOGICOS        3
 #define LARGO_OPERADORES_LOGICOS  4
 
 //functions
-void writeToFile(char *text);
+void escribirArchivo(char *text);
 void aceptarPalabra();
 void aceptarComentario();
 void aceptarEspacio();
@@ -40,7 +40,9 @@ char arrOperadoresLogicos[OPERADORES_LOGICOS][LARGO_OPERADORES_LOGICOS] = {"and"
 char palabrasReservadas[PALABRAS_RESERVADAS][LARGO_PALABRAS_RESERVADAS] = {"program",
                                                                             "var","begin",
                                                                             "end","if",
-                                                                            "then","else"};
+                                                                            "then","else",
+                                                                            "repeat","until",
+                                                                            "read", "write"};
 char mensajedeError[] = "Error en la linea ";
 int error_token = 0;
 
@@ -49,7 +51,7 @@ int main()
     inicioLexema = fopen("origen.txt", "r");
     avance = fopen("origen.txt", "r");
     finalOfFile = fopen("origen.txt", "r");
-    fp=fopen("test.txt", "w");
+    fp=fopen("origenTokens.txt", "w");
     
     fseek(finalOfFile, 0, SEEK_END);
 
@@ -62,23 +64,13 @@ int main()
             aceptarPalabra();
             switch(c)
             {
+                case 1:
+                    printf("Operador menor que \n");
+                    escribirArchivo("<");
+                    break;
                 case 2:
                     printf("Operador igualdad \n");
-                    break;
-                case 4:
-                    printf("Operador desigualdad \n");
-                    break;
-                case 5:
-                    printf("Operador mayor que \n");
-                    break;
-                case 6:
-                    printf("Operador mayor ó igual que \n");
-                    break;
-                case 7:
-                    printf("Operador menor que \n");
-                    break;
-                case 8:
-                    printf("Operador menor ó igual que \n");
+                    escribirArchivo("=");
                     break;
             }
         }
@@ -93,6 +85,7 @@ int main()
         else if((c = numeros()) != -1)
         {
             aceptarPalabra();
+            escribirArchivo("numero");
             switch(c)
             {
                 case 2:
@@ -126,6 +119,7 @@ int main()
         {
             aceptarPalabra();
             puts("Identificador");
+            escribirArchivo("identificador");
         }
         else if((c=caracterDelimitacion())!=-1)
         {
@@ -134,9 +128,11 @@ int main()
             {
                 case 1:
                     puts("Parentesis izquierdo");
+                    escribirArchivo("(");
                     break;
                 case 2:
                     puts("Parentesis derecho");
+                    escribirArchivo(")");
                     break;
                 case 3:
                     puts("Corchete izquierdo");
@@ -153,15 +149,19 @@ int main()
             {
                 case 1:
                     puts("suma");
+                    escribirArchivo("+");
                     break;
                 case 2:
                     puts("resta");
+                    escribirArchivo("-");
                     break;
                 case 3:
                     puts("multiplicacion");
+                    escribirArchivo("*");
                     break;
                 case 4:
                     puts("division");
+                    escribirArchivo("/");
                     break;
             }
         }
@@ -169,6 +169,7 @@ int main()
         {
             aceptarPalabra();
             puts("Asignacion");
+            escribirArchivo(":=");
         }
         else if((c=signosPuntuacion()) !=-1)
         {
@@ -183,6 +184,7 @@ int main()
                     break;
                 case 3:
                     puts("Punto y coma");
+                    escribirArchivo(";");
                     break;
             }
         }
@@ -203,14 +205,13 @@ int main()
     return 0;
 }
 
-void writeToFile(char *text)
+void escribirArchivo(char *text)
 {
     char* str = "string";
     int x = 10;
-
     if(fp == NULL)
         exit(-1);
-    fprintf(fp, "%s \n", text);
+    fprintf(fp, "%s ", text);
 }
 
 
@@ -228,7 +229,6 @@ void aceptarPalabra()
     // fgets prints whatever is between the starting point and the end point
     fgets(buffer, finPalabra - inicioPalabra, inicioLexema);
     printf ("[%s]\t\t", buffer);
-    writeToFile(buffer);
     fseek(inicioLexema, finPalabra, SEEK_SET);
 }
 void aceptarComentario()
@@ -352,6 +352,7 @@ int palabraReservada()
         {
             if(strcmp(palabrasReservadas[palabra], construirPalabra)== 0)
             {
+                escribirArchivo(construirPalabra);
                 return 1;
             }
         
@@ -406,7 +407,7 @@ int operadorAsignacion()
         case 0:
             switch(c)
             {
-            case '=':
+            case ':':
                 estadoActual = 1;
                 break;
             default:
@@ -414,14 +415,18 @@ int operadorAsignacion()
                 break;
             }
             break;
+        case 1:
+            estadoActual = (c == '=') ? 2 : -1;
+            break;
         default:
             estadoActual = -1;
+            break;
         }
         c = obtenerSiguienteCaracter();
         
     }
     
-    if(estadoActual == 1)
+    if(estadoActual == 2)
     {
         return estadoActual;
     }
@@ -738,56 +743,37 @@ int oprel()
     int estadoActual = 0;
     int c = obtenerSiguienteCaracter();
      
-
-    while (isNormalChar(c) && estadoActual != -1)
+    while(isNormalChar(c) && estadoActual != -1)
     {
-        switch (estadoActual){
+        switch(estadoActual)
+        {
         case 0:
-            switch (c){
-            case '=':
-                estadoActual = 1;
-                break;
-            case '!':
-                estadoActual = 3;
-                break;
-            case '>':
-                estadoActual = 5;
-                break;
-            case '<':
-                estadoActual = 7;
-                break;
-            default:
-                estadoActual = -1;
-                break;
+            switch(c)
+            {
+                case '<':
+                    estadoActual = 1;
+                    break;
+                case '=':
+                    estadoActual = 2;
+                    break;
+                default:
+                    estadoActual = -1;
+                    break;
             }
-            break;
-        case 1:
-            estadoActual = (c == '=') ? 2 : -1;
-            break;
-        case 3:
-            estadoActual = (c == '=') ? 4 : -1;
-            break;
-        case 5:
-            estadoActual = (c == '=') ? 6 : -1;
-            break;
-        case 7:
-            estadoActual = (c == '=') ? 8 : -1;
             break;
         default:
             estadoActual = -1;
-            break;
         }
         c = obtenerSiguienteCaracter();
-
+        
     }
 
-    if (estadoActual == 2 || estadoActual == 4 || estadoActual == 5 || estadoActual == 6 || estadoActual == 7 || estadoActual == 8)
+    if (estadoActual == 1 || estadoActual == 2 )
     {
         return estadoActual;
     }
     // if the word is rejected then we need to move the pointer to the beginning if the word.
     rechazarPalabra();
-    
     return -1;
 }
 

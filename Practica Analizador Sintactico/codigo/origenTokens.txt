@@ -1,1 +1,1 @@
-if numero < numero then read identificador end
+read < = := numero 

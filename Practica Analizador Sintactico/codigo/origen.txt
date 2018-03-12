@@ -1,9 +1,1 @@
-// com 
-// entario 
-begin ; 
-x = 40 
-y = _0x3d5ar;    // comentario 
-z = .32e-4;   // otro comentario 
-if x + 34 > y or z == 0.4 then begin(x, y); 
-else program(y, x);
-end
+read  < = :=  1 
