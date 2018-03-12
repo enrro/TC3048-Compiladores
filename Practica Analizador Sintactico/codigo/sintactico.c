@@ -23,23 +23,15 @@ int opmult();
 int factor();
 void empatar();
 void senial_error();
-
+void cargarArchivo();
 //globals
 int iterador = 0;
-char token[MAX_TOKENS][BUFFER] = {  "if",
-                                    "numero",
-                                    "<",
-                                    "numero",
-                                    "then",
-                                    "read",
-                                    "identificador",
-                                    "else",
-                                    "read",
-                                    "identificador",
-                                    "end"};
+char token[MAX_TOKENS][BUFFER];
 
 int main()
 {
+
+    cargarArchivo();
     programa(token);
     printf("%s \n", "programa finalizado sin anomalias");
     system("read -p 'Press Enter to continue...' var");
@@ -297,4 +289,30 @@ void senial_error()
 void empatar()
 {
     ++iterador;
+}
+
+void cargarArchivo()
+{
+    FILE* inp;
+    inp = fopen("origen.txt","r");		//filename of your data file
+    int i = 0;
+    while(1){
+        char r = (char)fgetc(inp);
+        int k = 0;
+        while(r!=' ' && !feof(inp)){	//read till , or EOF
+            token[i][k++] = r;			//store in array
+            r = (char)fgetc(inp);
+        }
+        token[i][k]=0;		//make last character of string null 
+        if(feof(inp)){		//check again for EOF
+            break;
+        }
+        i++;
+    }
+    int j;
+
+    printf("Los tokens leidos son: \n");	//print array
+    for(j = 0;j<=i;j++){
+        printf("%s\n",token[j] );	//print array
+    }
 }
