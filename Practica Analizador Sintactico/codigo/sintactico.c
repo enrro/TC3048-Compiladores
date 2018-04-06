@@ -103,7 +103,7 @@ int sent_if()
                     if((strcmp(token[iterador], "else") == 0))
                     {
                         empatar();
-                        return secuencia_sent();
+                        secuencia_sent();
                     }
                     if((strcmp(token[iterador], "end") == 0))
                     {
@@ -126,8 +126,12 @@ int sent_repeat()
         {
             if((strcmp(token[iterador], "until") == 0))
             {
+                
                 empatar();
-                return expre();
+                if(expre())
+                {
+                    return 1;
+                }
             }
         }
     }
@@ -176,6 +180,7 @@ int sent_write()
 int expre()
 {
     int res = exp_simple();
+    
     if(res && op_comparacion())
     {
         return exp_simple();
@@ -202,6 +207,7 @@ int op_comparacion()
 int exp_simple()
 {
     int res = term();
+    
     if(res && opsum())
     {
         return term();
@@ -254,6 +260,7 @@ int opmult()
 
 int factor()
 {
+    
     if((strcmp(token[iterador], "(") == 0))
     {
         empatar();

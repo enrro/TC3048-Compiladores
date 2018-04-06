@@ -1,1 +1,1 @@
-read  < = :=  1 
+if 1 < 2 then read 1 end

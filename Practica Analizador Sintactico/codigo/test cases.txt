@@ -1,0 +1,4 @@
+if numero < numero then read identificador else read identificador end ; read identificador ; repeat read identificador until numero identificador
+
+repeat read identificador until numero identificador ; 
+if identificador < numero then identificador := identificador end

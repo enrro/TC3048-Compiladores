@@ -1,1 +1,1 @@
-read < = := numero 
+repeat read identificador until numero identificador
