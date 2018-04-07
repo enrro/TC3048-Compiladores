@@ -61,23 +61,7 @@ int secuencia_sent()
 
 int sentencia()
 {
-    if(sent_if())
-    {
-
-    }
-    else if(sent_repeat())
-    {
-
-    }
-    else if(sent_assign())
-    {
-
-    }
-    else if(sent_read())
-    {
-
-    }
-    else if(sent_write())
+    if(sent_if()|sent_repeat()|sent_assign()|sent_read()|sent_write())
     {
 
     }
