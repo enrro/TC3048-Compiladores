@@ -27,6 +27,7 @@ void cargarArchivo();
 //globals
 int iterador = 0;
 char token[MAX_TOKENS][BUFFER];
+int numMetodo = 0;
 
 int main()
 {
@@ -44,12 +45,21 @@ int main()
 
 int programa()
 {
-    return secuencia_sent();
+    numMetodo = 1;
+    secuencia_sent();
+    printf("aqui %s \n", token[iterador]);
+    if(strcmp(token[iterador], "") == 0)
+        printf("victoria \n");
+    else
+        senial_error();
+        
+    return 1;
 }
 
 
 int secuencia_sent()
 {
+    numMetodo = 2;
     int res = sentencia();
     while(strcmp(token[iterador], ";")==0)
     {
@@ -61,7 +71,24 @@ int secuencia_sent()
 
 int sentencia()
 {
-    if(sent_if()|sent_repeat()|sent_assign()|sent_read()|sent_write())
+    numMetodo = 3;
+    if(sent_if())
+    {
+
+    }
+    else if(sent_repeat())
+    {
+
+    }
+    else if(sent_assign())
+    {
+
+    }
+    else if(sent_read())
+    {
+
+    }
+    else if(sent_write())
     {
 
     }
@@ -74,6 +101,7 @@ int sentencia()
 
 int sent_if()
 {
+    numMetodo = 4;
     if((strcmp(token[iterador], "if") == 0))
     {
         empatar();
@@ -103,6 +131,7 @@ int sent_if()
 
 int sent_repeat()
 {
+    numMetodo = 5;
     if((strcmp(token[iterador], "repeat") == 0))
     {
         empatar();
@@ -124,9 +153,11 @@ int sent_repeat()
 
 int sent_assign()
 {
+    numMetodo = 6;
     if((strcmp(token[iterador], "identificador") == 0))
     {
         empatar();
+        printf("Asignacion \n");
         if((strcmp(token[iterador], ":=") == 0))
         {
             empatar();
@@ -138,6 +169,7 @@ int sent_assign()
 
 int sent_read()
 {
+    numMetodo = 7;
     if((strcmp(token[iterador], "read") == 0))
     {
         empatar();
@@ -153,6 +185,7 @@ int sent_read()
 
 int sent_write()
 {
+    numMetodo = 8;
     if((strcmp(token[iterador], "write") == 0))
     {
         empatar();
@@ -163,6 +196,7 @@ int sent_write()
 
 int expre()
 {
+    numMetodo = 9;
     int res = exp_simple();
     
     if(res && op_comparacion())
@@ -174,6 +208,7 @@ int expre()
 
 int op_comparacion()
 {
+    numMetodo =10;
     if((strcmp(token[iterador], "<") == 0))
     {
         empatar();
@@ -190,6 +225,7 @@ int op_comparacion()
 
 int exp_simple()
 {
+    numMetodo =11;
     int res = term();
     
     if(res && opsum())
@@ -202,6 +238,7 @@ int exp_simple()
 
 int opsum()
 {
+    numMetodo =12;
     if((strcmp(token[iterador], "+") == 0))
     {
         empatar();
@@ -218,6 +255,7 @@ int opsum()
 
 int term()
 {
+    numMetodo =13;
     int res = factor();
     if(res && opmult())
     {
@@ -228,6 +266,7 @@ int term()
 
 int opmult()
 {
+    numMetodo =14;
     if((strcmp(token[iterador], "*") == 0))
     {
         empatar();
@@ -244,7 +283,7 @@ int opmult()
 
 int factor()
 {
-    
+    numMetodo =15;
     if((strcmp(token[iterador], "(") == 0))
     {
         empatar();
@@ -279,6 +318,8 @@ void senial_error()
 
 void empatar()
 {
+    //printf("funcion %d \n",numMetodo);
+    //printf("token %s \n",token[iterador]);
     ++iterador;
 }
 
