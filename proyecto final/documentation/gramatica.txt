@@ -1,6 +1,6 @@
 Class_Definition -> Noun Verb-to-Be CLASS
 Attribute_Definition -> PersonalPronoun AttribVerb("Include", "Own", "Possess", "Have") Attribute
-Attribute -> Noun ["=" | "is" (String | Number | Boolean | Pair | Array] 
+Attribute -> Noun ["=" | "is" (String | Number | Boolean | Pair | Array)] 
 String -> STRSTART ANY STRSTOP
 Boolean -> TRUE | FALSE
 Pair -> "(" NUMBER "," NUMBER ")"

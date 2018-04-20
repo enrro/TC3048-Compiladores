@@ -1,1 +1,2 @@
 [('dog', 'NN'), ('is', 'ASSIGN'), ('Class', 'NNP')]
+[('He', 'PRP'), (u'ha', 'VBD'), ('mood', 'NN'), ('=', ':'), ('``', 'STRSTART'), ('HAPPY', 'NNP'), ("''", 'STRSTOP'), (',', ','), ('energy', 'NN'), ('=', ':'), ('100', 'CD'), (',', ','), ('coordenatePosition', 'NNP'), ('=', 'NNP'), ('(', 'NNP'), ('0,0', 'CD'), (')', 'CD')]
