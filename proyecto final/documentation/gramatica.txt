@@ -1,0 +1,22 @@
+Class_Definition -> Noun Verb-to-Be CLASS
+Attribute_Definition -> PersonalPronoun AttribVerb("Include", "Own", "Possess", "Have") Attribute
+Attribute -> Noun ["=" | "is" (String | Number | Boolean | Pair | Array] 
+String -> STRSTART ANY STRSTOP
+Boolean -> TRUE | FALSE
+Pair -> "(" NUMBER "," NUMBER ")"
+Array -> "[" [ANYBASIC] "]"
+Function_Declaration -> PersonalPronoun MethodVerb("Can", "May") ProperNounCycle 
+ProperNounCycle -> Noun ["," ProperNounCycle]
+Function_Definition -> MethodStart PersonalPronoun [Function_Parameters] ( Function_Body | Function_Print ) 
+Function_Parameters -> PersonalPronoun ParameterVerb("Need", "Require", "Demand") ProperNounCycle
+Function_Body -> PersonalPronoun MethodBodyVerb("Use", "Utilize", "Exert", "Employ", "Wield", "Apply") FBody_Cycle
+FBody_Cycle: (FunctionCall | Action) ["," FBody_Cycle] [ RETURN ( BASIC | ProperNoun | Pair ) ] 
+FunctionCall -> ProperNoun [ "(" ANYBASIC ")" ] 
+ANYBASIC -> BASIC [ "," ANYBASIC ]
+Action -> ( ADD | SUBSTRACT | ASSIGN ) ( BASIC | ProperNoun )
+BASIC -> String | Number | Boolean 
+FUNCTION -> Function_Declaration Function_Definition_Cycle
+Function_Definition_Cycle -> Function_Definition [ "," Function_Definition_Cycle ] 
+Function_Print -> PRINT AnyTokenCycle 
+AnyTokenCycle -> AnyToken [ AnyTokenCycle ]
+AnyToken -> (All tokens except "," and End of Sentence)
