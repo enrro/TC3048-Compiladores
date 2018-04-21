@@ -1,2 +1,4 @@
 [('dog', 'NN'), ('is', 'ASSIGN'), ('Class', 'NNP')]
 [('He', 'PRP'), (u'ha', 'VBD'), ('mood', 'NN'), ('=', ':'), ('``', 'STRSTART'), ('HAPPY', 'NNP'), ("''", 'STRSTOP'), (',', ','), ('energy', 'NN'), ('=', ':'), ('100', 'CD'), (',', ','), ('coordenatePosition', 'NNP'), ('=', 'NNP'), ('(', 'NNP'), ('0,0', 'CD'), (')', 'CD')]
+[('He', 'PRP'), ('Bark', 'NNP'), (',', ','), ('Run', 'NNP'), (',', ','), ('MoveLeft', 'NNP'), (',', ','), ('MoveRight', 'NNP'), (',', ','), ('MoveForward', 'NNP'), (',', ','), ('Lay', 'NNP'), ('Check', 'NNP')]
+[('To', 'MS'), ('Run', 'NNP'), ('he', 'PRP'), ('used', 'MB'), ('MoveForward', 'NNP'), ('(', 'NNP'), ('2', 'CD'), (')', 'CD'), (',', ','), ('his', 'PRP$'), ('energy', 'NN'), (u'decrease', 'SUBS'), ('1', 'CD'), (',', ','), ('his', 'PRP$'), ('mood', 'NN'), ('is', 'ASSIGN'), ('``', 'STRSTART'), ('PLAY', 'NNP'), ("''", 'STRSTOP'), ('return', 'NN'), ('0', '-NONE-')]
