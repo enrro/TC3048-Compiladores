@@ -1,22 +1,27 @@
-Class_Definition -> Noun Verb-to-Be CLASS
-Attribute_Definition -> PersonalPronoun AttribVerb("Include", "Own", "Possess", "Have") Attribute
-Attribute -> Noun ["=" | "is" (String | Number | Boolean | Pair | Array)] 
-String -> STRSTART ANY STRSTOP
-Boolean -> TRUE | FALSE
-Pair -> "(" NUMBER "," NUMBER ")"
-Array -> "[" [ANYBASIC] "]"
-Function_Declaration -> PersonalPronoun MethodVerb("Can", "May") ProperNounCycle 
-ProperNounCycle -> Noun ["," ProperNounCycle]
-Function_Definition -> MethodStart ProperNoun [Function_Parameters] ( Function_Body | Function_Print )
-Function_Parameters -> PersonalPronoun ParameterVerb("Need", "Require", "Demand") ProperNounCycle
-Function_Body -> PersonalPronoun MethodBodyVerb("Use", "Utilize", "Exert", "Employ", "Wield", "Apply") FBody_Cycle
-FBody_Cycle: (FunctionCall | Action) ["," FBody_Cycle] [ RETURN ( BASIC | ProperNoun | Pair ) ] 
-FunctionCall -> ProperNoun [ "(" ANYBASIC ")" ] 
-ANYBASIC -> BASIC [ "," ANYBASIC ]
-Action -> ( ADD | SUBSTRACT | ASSIGN ) ( BASIC | ProperNoun )
-BASIC -> String | Number | Boolean 
-FUNCTION -> Function_Declaration Function_Definition_Cycle
-Function_Definition_Cycle -> Function_Definition [ "," Function_Definition_Cycle ] 
-Function_Print -> PRINT AnyTokenCycle 
+Class -> Class_Definition Attribute_Definition Functions
+Class_Definition -> Noun "ASSIGN" "CLASS"
+Attribute_Definition -> "PRP" "OWN" Attribute_Cycle
+Attribute_Cycle -> Attribute [ "," Attribute_Cycle ]
+Attribute -> Noun [ "ASSIGN" ( Number | String | Boolean | Pair | Array ) ]
+Functions -> Function_Declarations Function_Definition_Cycle
+Function_Declarations -> "PRP" proper_noun_cycle
+Function_Definition_Cycle -> Function_Definition [ "," Function_Definition_Cycle ]
+Function_Definition -> "TO" Noun [Function_Parameters] ( Function_Body | Function_Print)
+Function_Parameters -> "PRP" "PARAMVERB" proper_noun_cycle
+Function_Print -> "PRINT" AnyTokenCycle
+Function_Body -> "PRP" "BODYVERB" FBody_Cycle [ "RETURN" Basic_Type ]
+FBody_Cycle -> ( Function_Call | Action ) [ "," FBody_Cycle ]
+Function_Call -> Noun [ "PARL" [ any_basic ] "PARR" ]
 AnyTokenCycle -> AnyToken [ AnyTokenCycle ]
-AnyToken -> (All tokens except "," and End of Sentence)
+AnyToken -> (All tokens until "," or End of Sentence)
+proper_noun_cycle -> Noun [ "," proper_noun_cycle ]
+any_basic -> Basic_Type [ "," any_basic ]
+Action -> ( "ADD" | "SUBSTRACT" | "ASSIGN" ) Basic_Type
+Basic_Type -> Number | String | Noun | Boolean
+Noun -> "NN" | "NNP"
+Number -> "CD"
+String -> "STRSTART [ Content ] STRSTOP"
+Content -> ( anything found inside is valid until STRSTOP is found )
+Boolean -> "TRUE" | "FALSE"
+Pair -> "PARL" "CD" "PARR"
+Array -> "BRACKL" "CD" "BRACKR"
